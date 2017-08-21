@@ -49,9 +49,9 @@ cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/
 chmod +x /usr/local/bin/spssl
 ```
 
-### Emitindo (e instalando) um certificando
+### Emitindo (e instalando) um certificado
 
-Run `spssl` and follow on screen instructions.
+Execure `spssl` e siga as instruções na tela.
 
 ### Desinstalando o script
 
