@@ -8,9 +8,9 @@ Let's Encrypt SSL automation for [ServerPilot free plan](http://bit.ly/serverpil
 ### Installing the script
 
 ```
-cd ~
-git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git
-cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/
+cd $HOME && \
+git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git && \
+cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/ && \
 chmod +x /usr/local/bin/spssl
 ```
 
@@ -43,9 +43,9 @@ Think on how much $ you're saving and buy me some coffee! :)
 ### Instalando o script
 
 ```
-cd ~
-git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git
-cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/
+cd $HOME && \
+git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git && \
+cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/ && \
 chmod +x /usr/local/bin/spssl
 ```
 
