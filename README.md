@@ -8,8 +8,8 @@ Let's Encrypt SSL automation for [ServerPilot free plan](http://bit.ly/serverpil
 ```
 cd ~
 git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git
-chmod +x letsencrypt-ssl-serverpilot/spssl
 cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/
+chmod +x /usr/local/bin/spssl
 ```
 
 ### Issuing a certificate
