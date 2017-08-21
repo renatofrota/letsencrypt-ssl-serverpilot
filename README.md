@@ -1,5 +1,5 @@
 # letsencrypt-ssl-serverpilot
-Let's Encrypt SSL automation for ServerPilot (http://bit.ly/serverpilot)
+Let's Encrypt SSL automation for [ServerPilot free plan](http://bit.ly/serverpilot)
 
 ## How to use
 
@@ -9,14 +9,22 @@ Let's Encrypt SSL automation for ServerPilot (http://bit.ly/serverpilot)
 cd ~
 git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git
 chmod +x letsencrypt-ssl-serverpilot/spssl
-ln -s $(pwd)/letsencrypt-ssl-serverpilot/spssl /usr/local/bin
+cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/
 ```
 
 ### Issuing a certificate
 
 Run `spssl` and follow on screen instructions.
 
-## Donate / Doar
+### Uninstalling the script
+
+```
+rm -f /usr/local/bin/spssl
+```
+
+## Donate
+
+Think on how much $ you're saving and buy me some coffee! :)
 
 > USD
 

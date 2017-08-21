@@ -1,5 +1,5 @@
 #!/bin/bash
-# Let's Encrypt SSL automation for ServerPilot (http://bit.ly/serverpilot)
+# Let's Encrypt SSL automation for [ServerPilot free plan](http://bit.ly/serverpilot)
 # by Renato Frota - http://github.com/renatofrota
 
 lebin=/usr/bin/letsencrypt
