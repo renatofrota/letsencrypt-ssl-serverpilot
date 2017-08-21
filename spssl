@@ -1,0 +1,157 @@
+#!/bin/bash
+# Let's Encrypt SSL automation for ServerPilot (http://bit.ly/serverpilot)
+# by Renato Frota - http://github.com/renatofrota
+
+lebin=/usr/bin/letsencrypt
+nginxvhosts=/etc/nginx-sp/vhosts.d
+nginxssl=/etc/nginx-sp/ssl
+apachevhosts=/etc/apache-sp/vhosts.d
+usersdir=/srv/users
+appsdir=apps
+certsdir=/etc/letsencrypt/live
+cronjobfile=/etc/cron.daily/letsencrypt-renew-cron
+leoutput=letsencrypt.script.log
+
+# allow only root
+[ "$EUID" -ne 0 ] && echo "Please run as root." && exit
+
+# Check for Let's Encrypt installation
+if [ ! -f "$lebin" ]
+then
+        echo "Let's Encrypt is not installed. Would you like to install it?"
+        read -p "Y or N " -n 1 -r
+        echo ""
+        if [[ "$REPLY" =~ ^[Yy]$ ]]
+        then
+                cd $HOME && \
+                sudo apt-get update && \
+                sudo apt-get install software-properties-common && \
+                sudo add-apt-repository ppa:certbot/certbot && \
+                sudo apt-get update && \
+                sudo apt-get install certbot
+        else
+                exit
+        fi
+fi
+
+[ ! -f "$lebin" ] && echo "Installation failed. Please refer to https://certbot.eff.org for instructions."
+
+echo -e "\nServer users:"
+/bin/ls -1 $usersdir
+echo -e "\nPlease enter the username:"
+read username
+[ ! -d "$usersdir/$username" ] && echo "Error: invalid user" && exit
+echo -e "\nUser apps:"
+/bin/ls -1 $usersdir/$username/$appsdir
+echo -e "\nPlease enter the app name:"
+read app
+[ ! -d "$usersdir/$username/$appsdir/$app" ] && echo "Error: invalid app" && exit
+echo -e "\nApp Domains:"
+for domain in $(grep -E 'ServerName|ServerAlias' $apachevhosts/$app.conf | sed -e 's;.*ServerName;;g' | sed -e 's;.*ServerAlias;;g' | xargs echo)
+do
+        echo $domain
+done
+echo -e "\nPlease enter the (sub)domain names you want included in SSL (separated by space)"
+echo -e "or leave blank to issue the SSL certificate for all the app domains"
+read readdomains
+if [ ! -z "$readdomains" ]
+then
+        domains=()
+        for domain in $readdomains
+        do
+                if [[ $domain != "ServerName server-$app" ]]
+                then
+                        domains+=("$domain")
+                        ddomains+=("-d $domain")
+                fi
+        done
+        certname=${readdomains[0]}
+else
+        domains=()
+        certname=""
+        for domain in $(grep -E 'ServerName|ServerAlias' $apachevhosts/$app.conf | sed -e 's;.*ServerName;;g' | sed -e 's;.*ServerAlias;;g' | xargs echo)
+        do
+                if [[ $domain != "ServerName server-$app" ]]
+                then
+                        [ -z "$certname" ] && certname=$domain
+                        domains+=("$domain")
+                        ddomains+=("-d $domain")
+                fi
+        done
+fi
+
+if ( ! find $certsdir -mmin -1 -name cert.pem -exec false {} + )
+then
+        echo "Please wait at least 1 minute before running this script again"
+        exit
+fi
+
+letsencrypt certonly --webroot -w $usersdir/$username/$appsdir/$app/public ${ddomains[@]} | sudo tee $leoutput
+
+if ( find $certsdir -mmin -1 -name cert.pem -exec false {} + )
+then
+        echo "Error: the certificate could not be issued for domain(s) ${domains[@]}"
+        echo "See $leoutput for more info"
+        exit
+else
+        certfile=$(grep "fullchain.pem" $leoutput)
+        certkey=$(grep "privkey.pem" $leoutput)
+        echo "The certificate has been successfully issued for domain(s) ${domains[@]}:"
+        echo "Certificate: $certfile"
+        echo "Private Key: $certkey"
+fi
+
+configfile=$nginxvhosts/$app-ssl.conf
+
+echo "
+server {
+    listen	443 ssl spdy;
+    listen	[::]:443 ssl spdy;
+    server_name" > $configfile
+for domain in ${domains[@]}
+do
+        echo "        $domain" >> $configfile
+done
+echo "      ;
+
+    root   $usersdir/$username/$appsdir/$app/public;
+
+    ssl_certificate_key      ssl/$app.key;
+    ssl_certificate          ssl/$app.combined_crt;
+
+    access_log  $usersdir/$username/log/$app/${app}_nginx.access.log  main;
+    access_log  $usersdir/$username/log/$app/${app}_nginx.access_ssl.log  main;
+    error_log   $usersdir/$username/log/$app/${app}_nginx.error.log;
+    error_log   $usersdir/$username/log/$app/${app}_nginx.error_ssl.log;
+
+    proxy_set_header    Host              \$host;
+    proxy_set_header    X-Real-IP         \$remote_addr;
+    proxy_set_header    X-Forwarded-For   \$proxy_add_x_forwarded_for;
+    proxy_set_header    X-Forwarded-SSL   on;
+    proxy_set_header    X-Forwarded-Proto \$scheme;
+
+    include $nginxvhosts/$app.d/*.ssl_conf;
+    include $nginxvhosts/$app.d/*.conf;
+
+}
+" >> $configfile
+
+echo -e "\nConfig file written ($configfile):"
+
+cat $configfile
+
+ln -s $certkey $nginxssl/$app.key
+ln -s $certfile $nginxssl/$app.combined_crt
+
+echo -e "\nSSL symlinks generated:\n"
+ls -lh $nginxssl/$app.key
+ls -lh $nginxssl/$app.combined_crt
+
+echo -e "\nRestarting nginx"
+sudo service nginx-sp restart
+
+echo -e "\nInstalling daily cronjob for automated renewals"
+echo -e '#!/bin/bash\nletsencrypt renew --renew-hook "service nginx-sp restart" >>/root/letsencrypt.renew.log 2>&1' > $cronjobfile
+chmod +x $cronjobfile
+ls -lh $cronjobfile
+echo -e "\nDone!"
