@@ -51,7 +51,7 @@ chmod +x /usr/local/bin/spssl
 
 ### Emitindo (e instalando) um certificado
 
-Execure `spssl` e siga as instruções na tela.
+Execute `spssl` e siga as instruções na tela.
 
 ### Desinstalando o script
 
