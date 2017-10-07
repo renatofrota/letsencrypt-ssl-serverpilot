@@ -3,6 +3,8 @@ Let's Encrypt SSL issuance and renewals automation for [ServerPilot free plan](h
 
 # English
 
+Current version: v0.2
+
 ## How to use
 
 ### Installing the script
@@ -11,7 +13,8 @@ Let's Encrypt SSL issuance and renewals automation for [ServerPilot free plan](h
 cd $HOME && \
 git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git && \
 sudo cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/ && \
-sudo chmod +x /usr/local/bin/spssl
+sudo chmod +x /usr/local/bin/spssl && \
+rm -rf letsencrypt-ssl-serverpilot
 ```
 
 ### Issuing (and installing) a certificate
@@ -23,7 +26,7 @@ Certificates are renewed automatically.
 ### Uninstalling the script
 
 ```
-rm -f /usr/local/bin/spssl /etc/cron.daily/letsencrypt-renew-cron
+rm -fv /usr/local/bin/spssl /etc/cron.daily/letsencrypt-renew-cron
 ```
 
 ## Donate
@@ -40,6 +43,8 @@ Think on how much $ you're saving and buy me some coffee! :)
 
 # Português
 
+Versão atual: v0.2
+
 # letsencrypt-ssl-serverpilot
 Automação de emissão e renovação de certificados Let's Encrypt SSL para o [plano gratuito da ServerPilot](http://bit.ly/serverpilot)
 
@@ -52,6 +57,7 @@ cd $HOME && \
 git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git && \
 sudo cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/ && \
 sudo chmod +x /usr/local/bin/spssl
+rm -rf letsencrypt-ssl-serverpilot
 ```
 
 ### Emitindo (e instalando) um certificado
@@ -63,7 +69,7 @@ Os certificados são renovados automaticamente.
 ### Desinstalando o script
 
 ```
-rm -f /usr/local/bin/spssl /etc/cron.daily/letsencrypt-renew-cron
+rm -fv /usr/local/bin/spssl /etc/cron.daily/letsencrypt-renew-cron
 ```
 
 ## Donate
