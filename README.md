@@ -10,8 +10,8 @@ Let's Encrypt SSL issuance and renewals automation for [ServerPilot free plan](h
 ```
 cd $HOME && \
 git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git && \
-cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/ && \
-chmod +x /usr/local/bin/spssl
+sudo cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/ && \
+sudo chmod +x /usr/local/bin/spssl
 ```
 
 ### Issuing (and installing) a certificate
@@ -50,8 +50,8 @@ Automação de emissão e renovação de certificados Let's Encrypt SSL para o [
 ```
 cd $HOME && \
 git clone https://github.com/renatofrota/letsencrypt-ssl-serverpilot.git && \
-cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/ && \
-chmod +x /usr/local/bin/spssl
+sudo cp letsencrypt-ssl-serverpilot/spssl /usr/local/bin/ && \
+sudo chmod +x /usr/local/bin/spssl
 ```
 
 ### Emitindo (e instalando) um certificado
