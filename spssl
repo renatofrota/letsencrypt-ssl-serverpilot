@@ -27,7 +27,7 @@ echo "
 "
 
 # allow only root
-[ "$EUID" -ne 0 ] && echo "Please run as root." && exit
+[ "$EUID" -ne 0 ] && echo "Please run as root or use sudo." && exit
 
 # prepare env
 mkdir -p /etc/letsencrypt/live
